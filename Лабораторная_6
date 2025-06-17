@@ -1,0 +1,35 @@
+# Создайте табличную переменную, содержащую три столбца («Номер месяца», «Название месяца», «Количество дней»), заполните ее для текущего года, и используйте ее. 
+--4.1.4
+declare @a table (
+	[Номер месяца] int,
+	[Название месяца] varchar(20),
+	[Количество дней] int)
+declare @year int = 2025, @month int = 1
+while @month < 13
+begin
+insert into @a 
+values(@month, datename(month, DATEFROMPARTS(@year, @month, 1)), DAY(EOMONTH(DATEFROMPARTS(@year, @month, 1))))
+set @month += 1
+end
+select 
+	[Номер месяца],
+	[Название месяца],
+	[Количество дней] from @a;
+
+
+# С помощью курсора, вычислите сумму баллов у учеников с наибольшим и наименьшим баллом. 
+declare mycursor cursor scroll
+for 
+	select Баллы from Ученики
+	order by Баллы
+declare @suma FLOAT = 0, @P FLOAT
+open mycursor
+fetch last from mycursor into @P
+set @suma = @suma + @P
+fetch first from mycursor into @P
+set @suma = @suma + @P
+print @suma
+close mycursor
+deallocate mycursor
+select min(Баллы) from Ученики;
+select max(Баллы) from Ученики;
